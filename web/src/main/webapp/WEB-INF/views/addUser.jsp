@@ -40,6 +40,10 @@
             <form:input path="age" class="form-control"/>
         </div>
         <div class="form-group">
+            <label for="Password">Password:</label>
+            <form:input path="Password" class="form-control"/>
+        </div>
+        <div class="form-group">
             <input class="btn btn-primary" type="submit" value="新增" />
             <a href="${pageContext.request.contextPath}/user/">返回</a>
         </div>

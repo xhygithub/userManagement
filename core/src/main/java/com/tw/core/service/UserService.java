@@ -26,6 +26,11 @@ public class UserService {
     }
 
     @Transactional
+    public List<User> login(String userName,String passWord){
+        return userDAO.login(userName,passWord);
+    }
+
+    @Transactional
     public void addUser(User user) {
         userDAO.addUser(user);
     }
@@ -47,6 +52,12 @@ public class UserService {
 
     @Transactional
     public void deleteUserList(long[] ids) {
+        userDAO.deleteUserList(ids);
+    }
+
+
+    @Transactional
+    public void login(long[] ids) {
         userDAO.deleteUserList(ids);
     }
 

@@ -27,6 +27,13 @@ public class UserDAO {
                 .list();
     }
 
+
+    public List<User> login(String userName,String passWord){
+        String query = "From User Where name=:userName and password=:passWord";
+        return sessionFactory.getCurrentSession().createQuery(query)
+                .setString("userName",userName).setString("passWord",passWord).list();
+    }
+
     public void addUser(User user) {
         sessionFactory.getCurrentSession().save(user);
     }
