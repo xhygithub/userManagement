@@ -7,10 +7,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.Filter;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import java.io.IOException;
 
 /**
@@ -108,8 +105,16 @@ public class SessionFilter implements HandlerInterceptor{
         HttpSession session = request.getSession();
         if(session.getAttribute("USERNAME")== null){
             String Return_Url = request.getRequestURL().toString();
+            Cookie cookie_clear = new Cookie("Cookie_beforelogin",null);
+            cookie_clear.setPath("/");
+            cookie_clear.setMaxAge(0);
+            response.addCookie(cookie_clear);
+
+            Cookie cookie= new Cookie("Cookie_beforelogin",Return_Url);
+            cookie.setPath("/");
+            response.addCookie(cookie);
             response.sendRedirect("/web/login/");
-            session.setAttribute("return_url",Return_Url);
+//            session.setAttribute("return_url",Return_Url);
             return false;
 
         }

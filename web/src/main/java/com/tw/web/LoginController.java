@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.Filter;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -37,30 +38,41 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public void login(@ModelAttribute User user, HttpServletRequest request,HttpServletResponse response)throws Exception{
-//        List logInf=userService.listUser();
-        ModelAndView modelAndView = new ModelAndView("userList");
-//        System.out.print("loopstart");
-        List allUser = userService.login(user.getName(), user.getPassword());
-        if (allUser.size() > 0) {
-            HttpSession session = request.getSession();
-            session.setAttribute("USERNAME", user.getName());
-//            String message = "login successfully";
-            if(session.getAttribute("return_url")!=null){
-                String return_path = session.getAttribute("return_url").toString();
-                request.getSession().removeAttribute("return_url");
-                response.sendRedirect(return_path);
-            }
-            else{
-                response.sendRedirect("/web/user/");
-            }
-//            modelAndView.addObject("message", message);
-//            modelAndView.addObject("users", userService.listUser());
-//            return modelAndView;
+    public void login(@ModelAttribute User user,
+                      @CookieValue(value="Cookie_beforelogin",required =false)String  Cookie_beforelogin,
+                      HttpServletRequest request,HttpServletResponse response)throws Exception{
 
-        }
-        else{
+        ModelAndView modelAndView = new ModelAndView("userList");
+        String return_path= Cookie_beforelogin == null ? "/web/user/":Cookie_beforelogin;
+        HttpSession session = request.getSession();
+        List allUser = userService.login(user.getName(), user.getPassword());
+        if (allUser.size() > 0) {//true username and password
+            session.setAttribute("USERNAME", user.getName());
+            //clear cookie
+            Cookie cookie_clear = new Cookie("Cookie_beforelogin",null);
+            cookie_clear.setPath("/");
+            cookie_clear.setMaxAge(0);
+            response.addCookie(cookie_clear);
+
+            response.sendRedirect(return_path);
+
+//            if(session.getAttribute("return_url")!=null){
+//                String return_path = session.getAttribute("return_url").toString();
+//                request.getSession().removeAttribute("return_url");
+//                response.sendRedirect(return_path);
+//            }
+//
+//            else{
+//                response.sendRedirect("/web/user/");
+//            }
+        }else{
+            Cookie cookie_clear = new Cookie("Cookie_beforelogin",null);
+            cookie_clear.setPath("/");
+            cookie_clear.setMaxAge(0);
+            response.addCookie(cookie_clear);
             response.sendRedirect("/web/login/");
+
+
         }
     }
 
